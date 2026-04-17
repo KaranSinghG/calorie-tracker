@@ -1,5 +1,7 @@
 package com.karan.calorietracker.model;
 
+import java.math.BigDecimal;
+
 import com.karan.calorietracker.model.enums.MealType;
 
 import jakarta.persistence.Column;
@@ -28,7 +30,7 @@ public class FoodLog extends BaseEntity {
     private MealType mealType;
 
     @Column(name = "quantity_in_grams", nullable = false, precision = 6, scale = 2)
-    private Double quantityInGrams;
+    private BigDecimal quantityInGrams;
 
     // Getters and Setters
     public User getUser() {
@@ -55,11 +57,11 @@ public class FoodLog extends BaseEntity {
         this.mealType = mealType;
     }
 
-    public Double getQuantityInGrams() {
+    public BigDecimal getQuantityInGrams() {
         return quantityInGrams;
     }
 
-    public void setQuantityInGrams(Double quantityInGrams) {
+    public void setQuantityInGrams(BigDecimal quantityInGrams) {
         this.quantityInGrams = quantityInGrams;
     }
 

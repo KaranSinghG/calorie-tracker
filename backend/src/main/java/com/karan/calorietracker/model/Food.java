@@ -1,5 +1,7 @@
 package com.karan.calorietracker.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -12,16 +14,16 @@ public class Food extends BaseEntity {
     private String name;
 
     @Column(name = "calories", nullable = false, precision = 10, scale = 2)
-    private Double calories;
+    private BigDecimal calories;
 
     @Column(name = "carbohydrates", nullable = false, precision = 10, scale = 2)
-    private Double carbohydrates;
+    private BigDecimal carbohydrates;
 
     @Column(name = "protein", nullable = false, precision = 10, scale = 2)
-    private Double protein;
+    private BigDecimal protein;
 
     @Column(name = "fat", nullable = false, precision = 10, scale = 2)
-    private Double fat;
+    private BigDecimal fat;
     
     // Getters and Setters
     public String getName() {
@@ -32,35 +34,35 @@ public class Food extends BaseEntity {
         this.name = name;
     }
 
-    public Double getCalories() {
+    public BigDecimal getCalories() {
         return calories;
     }
 
-    public void setCalories(Double calories) {
+    public void setCalories(BigDecimal calories) {
         this.calories = calories;
     }
 
-    public Double getCarbohydrates() {
+    public BigDecimal getCarbohydrates() {
         return carbohydrates;
     }
 
-    public void setCarbohydrates(Double carbohydrates) {
+    public void setCarbohydrates(BigDecimal carbohydrates) {
         this.carbohydrates = carbohydrates;
     }
 
-    public Double getProtein() {
+    public BigDecimal getProtein() {
         return protein;
     }
 
-    public void setProtein(Double protein) {
+    public void setProtein(BigDecimal protein) {
         this.protein = protein;
     }
 
-    public Double getFat() {
+    public BigDecimal getFat() {
         return fat;
     }
 
-    public void setFat(Double fat) {
+    public void setFat(BigDecimal fat) {
         this.fat = fat;
     }
 
