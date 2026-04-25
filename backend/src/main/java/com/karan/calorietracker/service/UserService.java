@@ -9,7 +9,7 @@ public interface UserService {
     
     User registerUser(User user);
     Optional<User> findByEmail(String email);
-    User findById(Long id);
+    Optional<User> findById(Long id);
     List<User> findAll();
 
 }
