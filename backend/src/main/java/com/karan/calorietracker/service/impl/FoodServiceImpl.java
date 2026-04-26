@@ -1,6 +1,7 @@
 package com.karan.calorietracker.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -23,8 +24,8 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
-    public Food findById(Long id) {
-        return foodRepository.findById(id).orElseThrow(() -> new RuntimeException("Food not found with id: " + id));
+    public Optional<Food> findById(Long id) {
+        return foodRepository.findById(id);
     }
 
     @Override
