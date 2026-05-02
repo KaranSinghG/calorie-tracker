@@ -16,8 +16,8 @@ public class Food extends BaseEntity {
     @Column(name = "calories", nullable = false, precision = 10, scale = 2)
     private BigDecimal calories;
 
-    @Column(name = "carbohydrates", nullable = false, precision = 10, scale = 2)
-    private BigDecimal carbohydrates;
+    @Column(name = "carbohydrate", nullable = false, precision = 10, scale = 2)
+    private BigDecimal carbohydrate;
 
     @Column(name = "protein", nullable = false, precision = 10, scale = 2)
     private BigDecimal protein;
@@ -42,12 +42,12 @@ public class Food extends BaseEntity {
         this.calories = calories;
     }
 
-    public BigDecimal getCarbohydrates() {
-        return carbohydrates;
+    public BigDecimal getCarbohydrate() {
+        return carbohydrate;
     }
 
-    public void setCarbohydrates(BigDecimal carbohydrates) {
-        this.carbohydrates = carbohydrates;
+    public void setCarbohydrate(BigDecimal carbohydrate) {
+        this.carbohydrate = carbohydrate;
     }
 
     public BigDecimal getProtein() {

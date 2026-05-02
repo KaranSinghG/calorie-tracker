@@ -6,17 +6,17 @@ public class FoodRequestDTO {
     
     private String name;
     private BigDecimal calories;
-    private BigDecimal carbohydrates;
+    private BigDecimal carbohydrate;
     private BigDecimal protein;
     private BigDecimal fat;
 
     public FoodRequestDTO() {
     }
 
-    public FoodRequestDTO(String name, BigDecimal calories, BigDecimal carbohydrates, BigDecimal protein, BigDecimal fat) {
+    public FoodRequestDTO(String name, BigDecimal calories, BigDecimal carbohydrate, BigDecimal protein, BigDecimal fat) {
         this.name = name;
         this.calories = calories;
-        this.carbohydrates = carbohydrates;
+        this.carbohydrate = carbohydrate;
         this.protein = protein;
         this.fat = fat;
     }
@@ -37,12 +37,12 @@ public class FoodRequestDTO {
         this.calories = calories;
     }
 
-    public BigDecimal getCarbohydrates() {
-        return carbohydrates;
+    public BigDecimal getCarbohydrate() {
+        return carbohydrate;
     }
 
-    public void setCarbohydrates(BigDecimal carbohydrates) {
-        this.carbohydrates = carbohydrates;
+    public void setCarbohydrate(BigDecimal carbohydrate) {
+        this.carbohydrate = carbohydrate;
     }
 
     public BigDecimal getProtein() {

@@ -7,7 +7,7 @@ public class FoodResponseDTO {
     private Long id;
     private String name;
     private BigDecimal calories;
-    private BigDecimal carbohydrates;
+    private BigDecimal carbohydrate;
     private BigDecimal protein;
     private BigDecimal fat;
     private LocalDateTime createdAt;
@@ -15,12 +15,12 @@ public class FoodResponseDTO {
     public FoodResponseDTO() {
     }
 
-    public FoodResponseDTO(Long id, String name, BigDecimal calories, BigDecimal carbohydrates, BigDecimal protein,
+    public FoodResponseDTO(Long id, String name, BigDecimal calories, BigDecimal carbohydrate, BigDecimal protein,
             BigDecimal fat, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.calories = calories;
-        this.carbohydrates = carbohydrates;
+        this.carbohydrate = carbohydrate;
         this.protein = protein;
         this.fat = fat;
         this.createdAt = createdAt;
@@ -38,8 +38,8 @@ public class FoodResponseDTO {
         return calories;
     }
 
-    public BigDecimal getCarbohydrates() {
-        return carbohydrates;
+    public BigDecimal getCarbohydrate() {
+        return carbohydrate;
     }
 
     public BigDecimal getProtein() {
