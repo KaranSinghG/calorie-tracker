@@ -29,8 +29,20 @@ public class FoodLog extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MealType mealType;
 
-    @Column(name = "quantity_in_grams", nullable = false, precision = 6, scale = 2)
+    @Column(name = "quantity_in_grams", nullable = false, precision = 10, scale = 2)
     private BigDecimal quantityInGrams;
+
+    @Column(name = "calories_consumed", nullable = false, precision = 10, scale = 2)
+    private BigDecimal caloriesConsumed;
+
+    @Column(name = "carbohydrates_consumed", nullable = false, precision = 10, scale = 2)
+    private BigDecimal carbohydrateConsumed;
+
+    @Column(name = "proteins_consumed", nullable = false, precision = 10, scale = 2)
+    private BigDecimal proteinConsumed;
+
+    @Column(name = "fats_consumed", nullable = false, precision = 10, scale = 2)
+    private BigDecimal fatConsumed;
 
     // Getters and Setters
     public User getUser() {
@@ -63,6 +75,38 @@ public class FoodLog extends BaseEntity {
 
     public void setQuantityInGrams(BigDecimal quantityInGrams) {
         this.quantityInGrams = quantityInGrams;
+    }
+
+    public BigDecimal getCaloriesConsumed() {
+        return caloriesConsumed;
+    }
+
+    public void setCaloriesConsumed(BigDecimal caloriesConsumed) {
+        this.caloriesConsumed = caloriesConsumed;
+    }
+
+    public BigDecimal getCarbohydrateConsumed() {
+        return carbohydrateConsumed;
+    }
+
+    public void setCarbohydrateConsumed(BigDecimal carbohydrateConsumed) {
+        this.carbohydrateConsumed = carbohydrateConsumed;
+    }
+
+    public BigDecimal getProteinConsumed() {
+        return proteinConsumed;
+    }
+
+    public void setProteinConsumed(BigDecimal proteinConsumed) {
+        this.proteinConsumed = proteinConsumed;
+    }
+
+    public BigDecimal getFatConsumed() {
+        return fatConsumed;
+    }
+
+    public void setFatConsumed(BigDecimal fatConsumed) {
+        this.fatConsumed = fatConsumed;
     }
 
 }

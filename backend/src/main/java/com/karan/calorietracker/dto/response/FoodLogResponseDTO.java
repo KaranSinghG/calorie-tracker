@@ -10,6 +10,7 @@ public class FoodLogResponseDTO {
     private Long id;
     private Long userId;
     private Long foodId;
+    private String foodName;
     private MealType mealType;
     private BigDecimal quantityInGrams;
     private BigDecimal calories;
@@ -21,12 +22,13 @@ public class FoodLogResponseDTO {
     public FoodLogResponseDTO() {
     }
 
-    public FoodLogResponseDTO(Long id, Long userId, Long foodId, MealType mealType, BigDecimal quantityInGrams,
+    public FoodLogResponseDTO(Long id, Long userId, Long foodId, String foodName, MealType mealType, BigDecimal quantityInGrams,
             BigDecimal calories, BigDecimal carbohydrate, BigDecimal protein, BigDecimal fat,
             LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;
         this.foodId = foodId;
+        this.foodName = foodName;
         this.mealType = mealType;
         this.quantityInGrams = quantityInGrams;
         this.calories = calories;
@@ -46,6 +48,10 @@ public class FoodLogResponseDTO {
 
     public Long getFoodId() {
         return foodId;
+    }
+
+    public String getFoodName() {
+        return foodName;
     }
 
     public MealType getMealType() {
