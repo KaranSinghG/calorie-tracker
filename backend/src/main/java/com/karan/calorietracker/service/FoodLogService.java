@@ -1,9 +1,9 @@
 package com.karan.calorietracker.service;
 
 import com.karan.calorietracker.dto.request.FoodLogRequestDTO;
-import com.karan.calorietracker.model.FoodLog;
+import com.karan.calorietracker.dto.response.FoodLogResponseDTO;
 
 public interface FoodLogService {
     
-    FoodLog logFood(FoodLogRequestDTO foodLogRequestDTO);
+    FoodLogResponseDTO logFood(FoodLogRequestDTO foodLogRequestDTO);
 }
