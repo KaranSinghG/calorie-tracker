@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.karan.calorietracker.dto.request.FoodLogRequestDTO;
 import com.karan.calorietracker.dto.response.FoodLogResponseDTO;
+import com.karan.calorietracker.exception.FoodNotFoundException;
+import com.karan.calorietracker.exception.UserNotFoundException;
 import com.karan.calorietracker.mapper.FoodLogMapper;
 import com.karan.calorietracker.model.Food;
 import com.karan.calorietracker.model.FoodLog;
@@ -31,11 +33,9 @@ public class FoodLogServiceImpl implements FoodLogService {
 
     @Override
     public FoodLogResponseDTO logFood(FoodLogRequestDTO foodLogRequestDTO) {
-        User user = userService.findById(foodLogRequestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.findById(foodLogRequestDTO.getUserId());
 
-        Food food = foodService.findById(foodLogRequestDTO.getFoodId())
-                .orElseThrow(() -> new RuntimeException("Food not found"));
+        Food food = foodService.findById(foodLogRequestDTO.getFoodId());
         FoodLog foodLog = FoodLogMapper.toEntity(foodLogRequestDTO, user, food, 
             food.getCalories().multiply(foodLogRequestDTO.getQuantityInGrams()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP),
             food.getCarbohydrate().multiply(foodLogRequestDTO.getQuantityInGrams()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP),

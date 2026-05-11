@@ -37,14 +37,14 @@ public class UserController {
 
     @GetMapping("/search")
     public ResponseEntity<UserResponseDTO> searchByEmailString(@RequestParam String email) {
-        return userService.findByEmail(email).map(UserMapper::toResponseDto).map(dto -> ResponseEntity.ok(dto))
-                .orElse(ResponseEntity.notFound().build());
+        UserResponseDTO userResponse = UserMapper.toResponseDto(userService.findByEmail(email));
+        return ResponseEntity.ok(userResponse);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> searchById(@PathVariable Long id) {
-        return userService.findById(id).map(UserMapper::toResponseDto).map(dto -> ResponseEntity.ok(dto))
-                .orElse(ResponseEntity.notFound().build());
+        UserResponseDTO userResponse = UserMapper.toResponseDto(userService.findById(id));
+        return ResponseEntity.ok(userResponse);
     }
 
     @GetMapping("/all")

@@ -38,8 +38,8 @@ public class FoodController {
 
     @GetMapping("/{id}")
     public ResponseEntity<FoodResponseDTO> getFoodById(@PathVariable Long id) {
-        return foodService.findById(id).map(FoodMapper::toResponseDto).map(dto -> ResponseEntity.ok(dto))
-                .orElse(ResponseEntity.notFound().build());
+        FoodResponseDTO foodResponse = FoodMapper.toResponseDto(foodService.findById(id));
+        return ResponseEntity.ok(foodResponse);
     }
 
     @GetMapping("/all")
