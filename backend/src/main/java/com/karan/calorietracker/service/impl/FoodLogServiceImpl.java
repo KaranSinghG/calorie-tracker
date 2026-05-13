@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.karan.calorietracker.dto.request.FoodLogRequestDTO;
 import com.karan.calorietracker.dto.response.FoodLogResponseDTO;
-import com.karan.calorietracker.exception.FoodNotFoundException;
-import com.karan.calorietracker.exception.UserNotFoundException;
 import com.karan.calorietracker.mapper.FoodLogMapper;
 import com.karan.calorietracker.model.Food;
 import com.karan.calorietracker.model.FoodLog;
