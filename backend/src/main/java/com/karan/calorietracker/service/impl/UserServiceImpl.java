@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.karan.calorietracker.exception.UserNotFoundException;
 import com.karan.calorietracker.model.User;
+import com.karan.calorietracker.model.enums.Role;
 import com.karan.calorietracker.repository.UserRepository;
 import com.karan.calorietracker.service.UserService;
 
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         return userRepository.save(user);
     }
 

@@ -1,8 +1,16 @@
 package com.karan.calorietracker.model;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.karan.calorietracker.model.enums.ActivityLevel;
 import com.karan.calorietracker.model.enums.Gender;
 import com.karan.calorietracker.model.enums.GoalType;
+import com.karan.calorietracker.model.enums.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +20,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;
@@ -44,9 +52,14 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private GoalType goalType;
 
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     // Getters and Setters
     public String getUsername() {
-        return username;
+        // Spring Security uses getUsername() to retrieve the username for authentication
+        return email;
     }
 
     public void setUsername(String username) {
@@ -117,4 +130,16 @@ public class User extends BaseEntity {
         this.goalType = goalType;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
 }
