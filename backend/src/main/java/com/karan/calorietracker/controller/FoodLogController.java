@@ -11,6 +11,8 @@ import com.karan.calorietracker.dto.request.FoodLogRequestDTO;
 import com.karan.calorietracker.dto.response.FoodLogResponseDTO;
 import com.karan.calorietracker.service.FoodLogService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/food-logs")
 public class FoodLogController {
@@ -22,7 +24,7 @@ public class FoodLogController {
     }
 
     @PostMapping("/log")
-    public ResponseEntity<FoodLogResponseDTO> logFood(@RequestBody FoodLogRequestDTO foodLogRequestDTO) {
+    public ResponseEntity<FoodLogResponseDTO> logFood(@RequestBody @Valid FoodLogRequestDTO foodLogRequestDTO) {
         FoodLogResponseDTO responseDto =  foodLogService.logFood(foodLogRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }

@@ -4,11 +4,19 @@ import java.math.BigDecimal;
 
 import com.karan.calorietracker.model.enums.MealType;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+
 public class FoodLogRequestDTO {
     
+    @NotNull(message = "User ID is required")
     private Long userId;
+    @NotNull(message = "Food ID is required")
     private Long foodId;
+    @NotNull(message = "Quantity in grams is required")
+    @DecimalMin(value = "0.1", message = "Quantity in grams must be greater than or equal to 0.1")
     private BigDecimal quantityInGrams;
+    @NotNull(message = "Meal Type is required")
     private MealType mealType;
 
     public FoodLogRequestDTO() {

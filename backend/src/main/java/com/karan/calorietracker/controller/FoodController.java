@@ -9,6 +9,8 @@ import com.karan.calorietracker.mapper.FoodMapper;
 import com.karan.calorietracker.model.Food;
 import com.karan.calorietracker.service.FoodService;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,7 @@ public class FoodController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<FoodResponseDTO> createFood(@RequestBody FoodRequestDTO food) {
+    public ResponseEntity<FoodResponseDTO> createFood(@RequestBody @Valid FoodRequestDTO food) {
         Food createdFood = foodService.createFood(FoodMapper.toEntity(food));
         return ResponseEntity.status(HttpStatus.CREATED).body(FoodMapper.toResponseDto(createdFood));
     }

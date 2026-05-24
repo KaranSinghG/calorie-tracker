@@ -4,17 +4,37 @@ import com.karan.calorietracker.model.enums.ActivityLevel;
 import com.karan.calorietracker.model.enums.Gender;
 import com.karan.calorietracker.model.enums.GoalType;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class UserRequestDTO {
     
+    @NotBlank(message = "Username is required")
     private String username;
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
     private String email;
+    @NotBlank(message = "Password is required")
     private String password;
+    @NotBlank(message = "Confirm Password is required")
     private String confirmPassword;
+    @NotNull(message = "Age is required")
+    @Min(value = 1, message = "Age must be greater than 0")
     private Integer age;
+    @NotNull(message = "Gender is required")
     private Gender gender;
+    @NotNull(message = "Weight is required")
+    @DecimalMin(value = "1.0", message = "Weight must be greater than or equal to 1.0")
     private Double weight;
+    @NotNull(message = "Height is required")
+    @DecimalMin(value = "1.0", message = "Height must be greater than or equal to 1.0")
     private Double height;
+    @NotNull(message = "Activity Level is required")
     private ActivityLevel activityLevel;
+    @NotNull(message = "Goal Type is required")
     private GoalType goalType;
 
 

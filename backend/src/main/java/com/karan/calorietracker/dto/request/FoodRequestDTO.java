@@ -2,12 +2,25 @@ package com.karan.calorietracker.dto.request;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class FoodRequestDTO {
     
+    @NotBlank(message = "Food name is required")
     private String name;
+    @NotNull(message = "Calories is required")
+    @DecimalMin(value = "0", message = "Calories must be greater than or equal to 0")
     private BigDecimal calories;
+    @NotNull(message = "Carbohydrate is required")
+    @DecimalMin(value = "0", message = "Carbohydrate must be greater than or equal to 0")
     private BigDecimal carbohydrate;
+    @NotNull(message = "Protein is required")
+    @DecimalMin(value = "0", message = "Protein must be greater than or equal to 0")
     private BigDecimal protein;
+    @NotNull(message = "Fat is required")
+    @DecimalMin(value = "0", message = "Fat must be greater than or equal to 0")
     private BigDecimal fat;
 
     public FoodRequestDTO() {

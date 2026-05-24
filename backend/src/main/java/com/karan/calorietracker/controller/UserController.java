@@ -19,6 +19,8 @@ import com.karan.calorietracker.mapper.UserMapper;
 import com.karan.calorietracker.model.User;
 import com.karan.calorietracker.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -30,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO requestDTO) {
+    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody @Valid UserRequestDTO requestDTO) {
         User createdUser = userService.registerUser(UserMapper.toEntity(requestDTO));
         return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toResponseDto(createdUser));
     }
