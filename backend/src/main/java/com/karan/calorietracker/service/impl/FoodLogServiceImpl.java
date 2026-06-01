@@ -51,7 +51,8 @@ public class FoodLogServiceImpl implements FoodLogService {
     public DailySummaryResponseDTO getDailySummary(Long userId, LocalDate date) {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
-        Object[] summary = foodLogRepository.getDailySummary(userId, startOfDay, endOfDay);
+        Object[] result = foodLogRepository.getDailySummary(userId, startOfDay, endOfDay);
+        Object[] summary = result != null ? (Object[]) result[0] : new Object[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
         return new DailySummaryResponseDTO(
             summary[0] != null ? ((BigDecimal) summary[0]).setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO,
             summary[1] != null ? ((BigDecimal) summary[1]).setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO,
