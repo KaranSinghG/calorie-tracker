@@ -2,10 +2,14 @@ package com.karan.calorietracker.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import org.springframework.stereotype.Service;
 
 import com.karan.calorietracker.dto.request.FoodLogRequestDTO;
+import com.karan.calorietracker.dto.response.DailySummaryResponseDTO;
 import com.karan.calorietracker.dto.response.FoodLogResponseDTO;
 import com.karan.calorietracker.mapper.FoodLogMapper;
 import com.karan.calorietracker.model.Food;
@@ -41,6 +45,20 @@ public class FoodLogServiceImpl implements FoodLogService {
             food.getFat().multiply(foodLogRequestDTO.getQuantityInGrams()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
         foodLogRepository.save(foodLog);
         return FoodLogMapper.toDTO(foodLog);
+    }
+
+    @Override
+    public DailySummaryResponseDTO getDailySummary(Long userId, LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
+        Object[] summary = foodLogRepository.getDailySummary(userId, startOfDay, endOfDay);
+        return new DailySummaryResponseDTO(
+            summary[0] != null ? ((BigDecimal) summary[0]).setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO,
+            summary[1] != null ? ((BigDecimal) summary[1]).setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO,
+            summary[2] != null ? ((BigDecimal) summary[2]).setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO,
+            summary[3] != null ? ((BigDecimal) summary[3]).setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO,
+            date
+        );
     }
     
 }

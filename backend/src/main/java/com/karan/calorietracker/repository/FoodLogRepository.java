@@ -12,7 +12,7 @@ import com.karan.calorietracker.model.FoodLog;
 @Repository
 public interface FoodLogRepository extends JpaRepository<FoodLog, Long> {
 	
-    @Query("SELECT SUM(fl.caloriesConsumed), SUM(fl.carbohydrateConsumed), SUM(fl.proteinConsumed), SUM(fl.fatConsumed) " +
+    @Query("SELECT SUM(fl.proteinConsumed), SUM(fl.carbohydrateConsumed), SUM(fl.fatConsumed),SUM(fl.caloriesConsumed) " +
            "FROM FoodLog fl " +
            "WHERE fl.user.id = :userId AND fl.createdAt >= :startOfDay AND fl.createdAt < :endOfDay")
     Object[] getDailySummary(@Param("userId") Long userId, @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
