@@ -11,4 +11,6 @@ public interface FoodLogService {
     FoodLogResponseDTO logFood(FoodLogRequestDTO foodLogRequestDTO);
 
     DailySummaryResponseDTO getDailySummary(Long userId, LocalDate date);
+
+    void deleteFoodLog(Long foodLogId, Long userId);
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.karan.calorietracker.dto.request.FoodLogRequestDTO;
 import com.karan.calorietracker.dto.response.DailySummaryResponseDTO;
 import com.karan.calorietracker.dto.response.FoodLogResponseDTO;
+import com.karan.calorietracker.exception.FoodLogNotFoundException;
 import com.karan.calorietracker.mapper.FoodLogMapper;
 import com.karan.calorietracker.model.Food;
 import com.karan.calorietracker.model.FoodLog;
@@ -59,6 +60,16 @@ public class FoodLogServiceImpl implements FoodLogService {
             summary[3] != null ? ((BigDecimal) summary[3]).setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO,
             date
         );
+    }
+
+    @Override
+    public void deleteFoodLog(Long foodLogId, Long userId) {
+        FoodLog foodLog = foodLogRepository.findById(foodLogId)
+            .orElseThrow(() -> new FoodLogNotFoundException("Food log not found with id: " + foodLogId));
+        if (!foodLog.getUser().getId().equals(userId)) {
+            throw new FoodLogNotFoundException("Food log not associated with user: " + userId);
+        }
+        foodLogRepository.delete(foodLog);
     }
     
 }
