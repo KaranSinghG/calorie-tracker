@@ -1,6 +1,7 @@
 package com.karan.calorietracker.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.karan.calorietracker.dto.request.FoodLogRequestDTO;
+import com.karan.calorietracker.dto.request.FoodLogUpdateRequestDTO;
 import com.karan.calorietracker.dto.response.DailySummaryResponseDTO;
 import com.karan.calorietracker.dto.response.FoodLogResponseDTO;
 import com.karan.calorietracker.exception.FoodLogNotFoundException;
@@ -22,6 +24,8 @@ import com.karan.calorietracker.model.User;
 import com.karan.calorietracker.service.FoodLogService;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/food-logs")
@@ -54,6 +58,23 @@ public class FoodLogController {
         Long userId = user.getId();
         foodLogService.deleteFoodLog(foodLogId, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<FoodLogResponseDTO>> getFoodLogByDate(
+            @RequestParam LocalDate date) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = user.getId();
+        List<FoodLogResponseDTO> foodLogs = foodLogService.getFoodLogByDate(userId, date);
+        return ResponseEntity.ok(foodLogs);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<FoodLogResponseDTO> updateFoodLog(@PathVariable Long id, @RequestBody @Valid FoodLogUpdateRequestDTO foodLogUpdateRequestDTO) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = user.getId();
+        FoodLogResponseDTO updatedFoodLog = foodLogService.updateFoodLog(userId, id, foodLogUpdateRequestDTO);
+        return ResponseEntity.ok(updatedFoodLog);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.karan.calorietracker.mapper;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.karan.calorietracker.dto.request.FoodLogRequestDTO;
 import com.karan.calorietracker.dto.response.FoodLogResponseDTO;
@@ -30,5 +31,9 @@ public class FoodLogMapper {
                 foodLog.getQuantityInGrams(), foodLog.getCaloriesConsumed(), foodLog.getCarbohydrateConsumed(),
                 foodLog.getProteinConsumed(), foodLog.getFatConsumed(), foodLog.getCreatedAt());
         return dto;
+    }
+
+    public static List<FoodLogResponseDTO> toDTOList(List<FoodLog> foodLogs) {
+        return foodLogs.stream().map(FoodLogMapper::toDTO).toList();
     }
 }
