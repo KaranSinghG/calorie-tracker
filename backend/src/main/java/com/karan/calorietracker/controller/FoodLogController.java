@@ -19,7 +19,6 @@ import com.karan.calorietracker.dto.request.FoodLogRequestDTO;
 import com.karan.calorietracker.dto.request.FoodLogUpdateRequestDTO;
 import com.karan.calorietracker.dto.response.DailySummaryResponseDTO;
 import com.karan.calorietracker.dto.response.FoodLogResponseDTO;
-import com.karan.calorietracker.exception.FoodLogNotFoundException;
 import com.karan.calorietracker.model.User;
 import com.karan.calorietracker.service.FoodLogService;
 
