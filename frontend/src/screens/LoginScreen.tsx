@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
+import {login} from "../services/AuthService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const styles = StyleSheet.create({
     container: {
@@ -50,7 +52,14 @@ export default function LoginScreen() {
             <TouchableOpacity
                 style={styles.button}
                 onPress={() => {
-                    // Handle login logic here
+                    login(email, password)
+                        .then(async token => {
+                            console.log("Login successful, token:", token);
+                            await AsyncStorage.setItem("token", token);
+                        })
+                        .catch(error => {
+                            console.error("Login failed:", error);
+                        });
                 }}
             >
                 <Text style={styles.buttonText}>Login Button</Text>
