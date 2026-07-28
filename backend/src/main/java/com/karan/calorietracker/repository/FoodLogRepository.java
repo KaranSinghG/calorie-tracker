@@ -6,11 +6,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-
 import com.karan.calorietracker.model.FoodLog;
 
-@Repository
 public interface FoodLogRepository extends JpaRepository<FoodLog, Long> {
 
     @Query("SELECT SUM(fl.proteinConsumed), SUM(fl.carbohydrateConsumed), SUM(fl.fatConsumed),SUM(fl.caloriesConsumed) "
