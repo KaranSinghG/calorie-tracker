@@ -12,4 +12,14 @@ void main() {
 
     expect(find.text('user@example.com'), findsOneWidget);
   });
+
+  testWidgets('Dashboard shows a sign out button', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DashboardPage(email: 'user@example.com'),
+      ),
+    );
+
+    expect(find.text('Sign out'), findsOneWidget);
+  });
 }
