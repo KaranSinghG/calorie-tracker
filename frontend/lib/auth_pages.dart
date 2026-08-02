@@ -108,6 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
                           decoration: const InputDecoration(
                             labelText: 'Email',
                             border: OutlineInputBorder(),
@@ -119,11 +120,13 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
+                          onFieldSubmitted: (_) => _submitLogin(),
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
+                          textInputAction: TextInputAction.done,
                           decoration: InputDecoration(
                             labelText: 'Password',
                             border: const OutlineInputBorder(),
@@ -147,6 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             return null;
                           },
+                          onFieldSubmitted: (_) => _submitLogin(),
                         ),
                         const SizedBox(height: 20),
                         if (_errorMessage != null)
