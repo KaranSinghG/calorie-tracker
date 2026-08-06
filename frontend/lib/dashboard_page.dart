@@ -383,7 +383,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   _buildCalorieSummaryCard(
                       summary, calorieTarget, remainingCalories),
                   const SizedBox(height: 16),
-                  _buildMacroBreakdownCard(summary),
+                  _buildMacroBreakdownCard(user, summary),
                   const SizedBox(height: 16),
                   _buildMealBreakdownCard(),
                 ],
@@ -417,7 +417,7 @@ class _DashboardPageState extends State<DashboardPage> {
         const SizedBox(height: 16),
         _buildCalorieSummaryCard(summary, calorieTarget, remainingCalories),
         const SizedBox(height: 16),
-        _buildMacroBreakdownCard(summary),
+        _buildMacroBreakdownCard(user, summary),
         const SizedBox(height: 16),
         _buildMealBreakdownCard(),
         const SizedBox(height: 16),
@@ -643,9 +643,10 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   // ── 2. Macronutrient Breakdown Card ────────────────────────────────────────
-  Widget _buildMacroBreakdownCard(DailySummary summary) {
+  Widget _buildMacroBreakdownCard(UserProfile user, DailySummary summary) {
     final totalMacros =
         summary.totalProtein + summary.totalCarbohydrate + summary.totalFat;
+    final targets = CalorieCalculator.macroTargets(user);
 
     return Card(
       elevation: 2,
@@ -673,6 +674,7 @@ class _DashboardPageState extends State<DashboardPage> {
               label: 'Protein',
               value: summary.totalProtein,
               total: totalMacros,
+              target: targets.protein,
               color: Colors.blue,
               icon: Icons.fitness_center,
             ),
@@ -681,6 +683,7 @@ class _DashboardPageState extends State<DashboardPage> {
               label: 'Carbs',
               value: summary.totalCarbohydrate,
               total: totalMacros,
+              target: targets.carbs,
               color: Colors.orange,
               icon: Icons.grain,
             ),
@@ -689,6 +692,7 @@ class _DashboardPageState extends State<DashboardPage> {
               label: 'Fat',
               value: summary.totalFat,
               total: totalMacros,
+              target: targets.fat,
               color: Colors.purple,
               icon: Icons.water_drop,
             ),
@@ -704,6 +708,7 @@ class _DashboardPageState extends State<DashboardPage> {
     required double total,
     required Color color,
     required IconData icon,
+    double? target,
   }) {
     final percentage = total > 0 ? (value / total * 100) : 0.0;
 
@@ -721,6 +726,16 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
             ),
             const Spacer(),
+            if (target != null)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                  'target ${target.toStringAsFixed(0)}g',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                ),
+              ),
             Text(
               '${value.toStringAsFixed(1)}g',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
