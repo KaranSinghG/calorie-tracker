@@ -429,7 +429,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: DropdownButtonFormField<String>(
-                                value: _selectedGender,
+                                initialValue: _selectedGender,
                                 decoration: const InputDecoration(
                                   labelText: 'Gender',
                                   border: OutlineInputBorder(),
@@ -494,7 +494,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
-                          value: _selectedActivityLevel,
+                          initialValue: _selectedActivityLevel,
                           decoration: const InputDecoration(
                             labelText: 'Activity level',
                             border: OutlineInputBorder(),
@@ -514,7 +514,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
-                          value: _selectedGoalType,
+                          initialValue: _selectedGoalType,
                           decoration: const InputDecoration(
                             labelText: 'Goal type',
                             border: OutlineInputBorder(),

@@ -48,6 +48,20 @@ class ApiClient {
     throw ApiException('POST $path failed (${response.statusCode}): ${response.body}');
   }
 
+  Future<dynamic> put(String path, {Map<String, dynamic>? body}) async {
+    final headers = await _headers();
+    final response = await http.put(
+      Uri.parse('$_baseUrl$path'),
+      headers: headers,
+      body: body != null ? jsonEncode(body) : null,
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.body.isEmpty) return null;
+      return jsonDecode(response.body);
+    }
+    throw ApiException('PUT $path failed (${response.statusCode}): ${response.body}');
+  }
+
   Future<void> delete(String path) async {
     final headers = await _headers(json: false);
     final response = await http.delete(

@@ -13,6 +13,28 @@ class ApiService {
     return UserProfile.fromJson(json as Map<String, dynamic>);
   }
 
+  Future<UserProfile> updateUserProfile({
+    required int id,
+    required String username,
+    required int age,
+    required String gender,
+    required double weight,
+    required double height,
+    required String activityLevel,
+    required String goalType,
+  }) async {
+    final json = await _apiClient.put('/users/$id', body: {
+      'username': username,
+      'age': age,
+      'gender': gender,
+      'weight': weight,
+      'height': height,
+      'activityLevel': activityLevel,
+      'goalType': goalType,
+    });
+    return UserProfile.fromJson(json as Map<String, dynamic>);
+  }
+
   // ── Foods ──────────────────────────────────────────────────────────────────
   Future<List<Food>> getAllFoods() async {
     final json = await _apiClient.get('/foods/all') as List<dynamic>;

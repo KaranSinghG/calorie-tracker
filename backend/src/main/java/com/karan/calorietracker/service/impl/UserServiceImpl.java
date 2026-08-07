@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.karan.calorietracker.dto.request.UserUpdateRequestDTO;
 import com.karan.calorietracker.exception.UserNotFoundException;
 import com.karan.calorietracker.model.User;
 import com.karan.calorietracker.model.enums.Role;
@@ -51,6 +52,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
-    }    
+    }
+
+    @Override
+    public User updateUser(Long id, UserUpdateRequestDTO updateRequestDTO) {
+        User user = findById(id);
+        user.setUsername(updateRequestDTO.getUsername());
+        user.setAge(updateRequestDTO.getAge());
+        user.setGender(updateRequestDTO.getGender());
+        user.setWeight(updateRequestDTO.getWeight());
+        user.setHeight(updateRequestDTO.getHeight());
+        user.setActivityLevel(updateRequestDTO.getActivityLevel());
+        user.setGoalType(updateRequestDTO.getGoalType());
+        return userRepository.save(user);
+    }
     
 }

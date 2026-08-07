@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'edit_profile_page.dart';
 import 'models/daily_summary.dart';
 import 'models/food.dart';
 import 'models/food_log.dart';
@@ -243,6 +244,23 @@ class _DashboardPageState extends State<DashboardPage> {
           SnackBar(
             content: Text(error.toString().replaceFirst('Exception: ', '')),
           ),
+        );
+      }
+    }
+  }
+
+  Future<void> _editProfile() async {
+    if (_user == null) return;
+
+    final updated = await Navigator.of(context).push<UserProfile>(
+      MaterialPageRoute(builder: (_) => EditProfilePage(user: _user!)),
+    );
+
+    if (updated != null && mounted) {
+      await _loadDashboardData();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully')),
         );
       }
     }
@@ -939,6 +957,12 @@ class _DashboardPageState extends State<DashboardPage> {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
+                ),
+                IconButton(
+                  onPressed: _editProfile,
+                  icon: const Icon(Icons.edit_outlined, size: 20),
+                  tooltip: 'Edit profile',
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ],
             ),
