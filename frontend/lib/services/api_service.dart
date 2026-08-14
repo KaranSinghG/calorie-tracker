@@ -16,6 +16,7 @@ class ApiService {
   Future<UserProfile> updateUserProfile({
     required int id,
     required String username,
+    required String email,
     required int age,
     required String gender,
     required double weight,
@@ -25,6 +26,7 @@ class ApiService {
   }) async {
     final json = await _apiClient.put('/users/$id', body: {
       'username': username,
+      'email': email,
       'age': age,
       'gender': gender,
       'weight': weight,

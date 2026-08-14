@@ -19,6 +19,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _apiService = ApiService();
 
   late final TextEditingController _usernameController;
+  late final TextEditingController _emailController;
   late final TextEditingController _ageController;
   late final TextEditingController _weightController;
   late final TextEditingController _heightController;
@@ -35,6 +36,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.initState();
     final user = widget.user;
     _usernameController = TextEditingController(text: user.username);
+    _emailController = TextEditingController(text: user.email);
     _ageController = TextEditingController(text: user.age.toString());
     _weightController = TextEditingController(text: user.weight.toString());
     _heightController = TextEditingController(text: user.height.toString());
@@ -46,6 +48,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void dispose() {
     _usernameController.dispose();
+    _emailController.dispose();
     _ageController.dispose();
     _weightController.dispose();
     _heightController.dispose();
@@ -77,6 +80,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final updated = await _apiService.updateUserProfile(
         id: widget.user.id,
         username: _usernameController.text.trim(),
+        email: _emailController.text.trim(),
         age: age,
         gender: _selectedGender,
         weight: weight,
@@ -151,6 +155,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             if (value == null || value.trim().isEmpty) {
                               return 'Please enter your username';
                             }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          enabled: false,
+                          textInputAction: TextInputAction.next,
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.email_outlined),
+                          ),
+                          validator: (value) {
+                            final v = value?.trim() ?? '';
+                            if (v.isEmpty) return 'Please enter your email';
+                            if (!v.contains('@')) return 'Please enter a valid email';
                             return null;
                           },
                         ),

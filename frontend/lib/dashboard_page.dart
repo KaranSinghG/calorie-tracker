@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'edit_profile_page.dart';
+import 'food_picker_dialog.dart';
 import 'models/daily_summary.dart';
 import 'models/food.dart';
 import 'models/food_log.dart';
@@ -100,133 +101,34 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> _showAddFoodDialog() async {
     if (_user == null || _allFoods.isEmpty) return;
 
-    Food? selectedFood;
-    String selectedMealType = 'BREAKFAST';
-    final quantityController = TextEditingController(text: '100');
-
-    await showDialog<void>(
+    final input = await showDialog<FoodLogInput>(
       context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (dialogContext, setDialogState) {
-          return AlertDialog(
-            title: const Text('Log Food'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  DropdownButtonFormField<Food>(
-                    initialValue: selectedFood,
-                    decoration: const InputDecoration(
-                      labelText: 'Food',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.restaurant_menu),
-                    ),
-                    items: _allFoods
-                        .map((food) => DropdownMenuItem(
-                              value: food,
-                              child: Text(
-                                '${food.name} (${food.calories.toStringAsFixed(0)} kcal/100g)',
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setDialogState(() {
-                        selectedFood = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    initialValue: selectedMealType,
-                    decoration: const InputDecoration(
-                      labelText: 'Meal type',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.schedule),
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: 'BREAKFAST', child: Text('Breakfast')),
-                      DropdownMenuItem(value: 'LUNCH', child: Text('Lunch')),
-                      DropdownMenuItem(value: 'DINNER', child: Text('Dinner')),
-                      DropdownMenuItem(value: 'SNACK', child: Text('Snack')),
-                    ],
-                    onChanged: (value) {
-                      setDialogState(() {
-                        selectedMealType = value ?? 'BREAKFAST';
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: quantityController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Quantity (grams)',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.scale),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
-              ),
-              FilledButton.icon(
-                onPressed: selectedFood == null
-                    ? null
-                    : () async {
-                        final quantity =
-                            double.tryParse(quantityController.text.trim());
-                        if (quantity == null || quantity <= 0) {
-                          ScaffoldMessenger.of(dialogContext).showSnackBar(
-                            const SnackBar(
-                              content: Text('Please enter a valid quantity'),
-                            ),
-                          );
-                          return;
-                        }
-                        try {
-                          await _apiService.logFood(
-                            userId: _user!.id,
-                            foodId: selectedFood!.id,
-                            quantityInGrams: quantity,
-                            mealType: selectedMealType,
-                          );
-                          if (dialogContext.mounted) {
-                            Navigator.of(dialogContext).pop();
-                          }
-                          await _loadDashboardData();
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Food logged successfully'),
-                              ),
-                            );
-                          }
-                        } catch (error) {
-                          if (dialogContext.mounted) {
-                            ScaffoldMessenger.of(dialogContext).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  error.toString().replaceFirst('Exception: ', ''),
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                icon: const Icon(Icons.add),
-                label: const Text('Log Food'),
-              ),
-            ],
-          );
-        },
-      ),
+      builder: (_) => FoodPickerDialog(foods: _allFoods),
     );
+    if (input == null || !mounted) return;
+
+    try {
+      await _apiService.logFood(
+        userId: _user!.id,
+        foodId: input.food.id,
+        quantityInGrams: input.quantityInGrams,
+        mealType: input.mealType,
+      );
+      await _loadDashboardData();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Food logged successfully')),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString().replaceFirst('Exception: ', '')),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _deleteFoodLog(FoodLog log) async {
@@ -257,6 +159,9 @@ class _DashboardPageState extends State<DashboardPage> {
     );
 
     if (updated != null && mounted) {
+      setState(() {
+        _user = updated;
+      });
       await _loadDashboardData();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
