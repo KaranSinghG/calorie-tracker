@@ -111,7 +111,8 @@ class _DashboardPageState extends State<DashboardPage> {
       await _apiService.logFood(
         userId: _user!.id,
         foodId: input.food.id,
-        quantityInGrams: input.quantityInGrams,
+        quantity: input.quantity,
+        quantityType: input.quantityType,
         mealType: input.mealType,
       );
       await _loadDashboardData();
@@ -633,7 +634,14 @@ class _DashboardPageState extends State<DashboardPage> {
     required IconData icon,
     double? target,
   }) {
-    final percentage = total > 0 ? (value / total * 100) : 0.0;
+    // Calculate progress towards target (if target exists)
+    final double progressPercentage = target != null && target > 0 
+        ? (value / target * 100).clamp(0.0, 100.0)
+        : 0.0;
+    
+    // Determine if target is met, exceeded, or needs more
+    final isTargetMet = target != null && value >= target;
+    final remaining = target != null ? (target - value).clamp(0.0, double.infinity) : 0.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -653,37 +661,49 @@ class _DashboardPageState extends State<DashboardPage> {
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: Text(
-                  'target ${target.toStringAsFixed(0)}g',
+                  isTargetMet
+                      ? '✓ ${value.toStringAsFixed(0)}g / ${target.toStringAsFixed(0)}g'
+                      : '${value.toStringAsFixed(0)}g / ${target.toStringAsFixed(0)}g',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
+                        color: isTargetMet
+                            ? Colors.green
+                            : Theme.of(context).colorScheme.outline,
+                        fontWeight: isTargetMet ? FontWeight.bold : FontWeight.normal,
                       ),
                 ),
+              )
+            else
+              Text(
+                '${value.toStringAsFixed(1)}g',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
-            Text(
-              '${value.toStringAsFixed(1)}g',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              '(${percentage.toStringAsFixed(0)}%)',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-            ),
           ],
         ),
         const SizedBox(height: 6),
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
-            value: total > 0 ? (value / total).clamp(0.0, 1.0) : 0.0,
+            value: target != null && target > 0 ? (value / target).clamp(0.0, 1.0) : 0.0,
             minHeight: 8,
             backgroundColor: color.withValues(alpha: 0.15),
-            valueColor: AlwaysStoppedAnimation<Color>(color),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              isTargetMet ? Colors.green : color,
+            ),
           ),
         ),
+        if (target != null && !isTargetMet)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              'Need ${remaining.toStringAsFixed(1)}g more',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                    fontSize: 11,
+                  ),
+            ),
+          ),
       ],
     );
   }

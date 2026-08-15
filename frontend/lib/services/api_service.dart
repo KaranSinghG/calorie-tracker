@@ -66,13 +66,15 @@ class ApiService {
   Future<FoodLog> logFood({
     required int userId,
     required int foodId,
-    required double quantityInGrams,
+    required double quantity,
+    required String quantityType,
     required String mealType,
   }) async {
     final json = await _apiClient.post('/food-logs/log', body: {
       'userId': userId,
       'foodId': foodId,
-      'quantityInGrams': quantityInGrams,
+      'quantity': quantity,
+      'quantityType': quantityType,
       'mealType': mealType,
     });
     return FoodLog.fromJson(json as Map<String, dynamic>);

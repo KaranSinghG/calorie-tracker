@@ -5,6 +5,7 @@ class Food {
   final double carbohydrate;
   final double protein;
   final double fat;
+  final double perItemWeight;
 
   Food({
     required this.id,
@@ -13,6 +14,7 @@ class Food {
     required this.carbohydrate,
     required this.protein,
     required this.fat,
+    required this.perItemWeight,
   });
 
   factory Food.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Food {
       carbohydrate: (json['carbohydrate'] as num).toDouble(),
       protein: (json['protein'] as num).toDouble(),
       fat: (json['fat'] as num).toDouble(),
+      perItemWeight: (json['perItemWeight'] as num?)?.toDouble() ?? 100.0,
     );
   }
 }

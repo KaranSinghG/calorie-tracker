@@ -39,13 +39,29 @@ public class FoodLogServiceImpl implements FoodLogService {
     @Override
     public FoodLogResponseDTO logFood(FoodLogRequestDTO foodLogRequestDTO) {
         User user = userService.findById(foodLogRequestDTO.getUserId());
-
         Food food = foodService.findById(foodLogRequestDTO.getFoodId());
-        FoodLog foodLog = FoodLogMapper.toEntity(foodLogRequestDTO, user, food, 
-            food.getCalories().multiply(foodLogRequestDTO.getQuantityInGrams()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP),
-            food.getCarbohydrate().multiply(foodLogRequestDTO.getQuantityInGrams()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP),
-            food.getProtein().multiply(foodLogRequestDTO.getQuantityInGrams()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP),
-            food.getFat().multiply(foodLogRequestDTO.getQuantityInGrams()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+        
+        // Calculate actual weight in grams based on quantity type
+        BigDecimal quantityInGrams;
+        if (foodLogRequestDTO.getQuantityType().equals(com.karan.calorietracker.model.enums.QuantityType.QUANTITY)) {
+            // If logging by quantity (items), multiply by per-item weight
+            quantityInGrams = foodLogRequestDTO.getQuantity().multiply(food.getPerItemWeight());
+        } else {
+            // If logging by weight (grams), use quantity directly
+            quantityInGrams = foodLogRequestDTO.getQuantity();
+        }
+        
+        // Calculate consumed macros based on actual weight
+        BigDecimal caloriesConsumed = food.getCalories().multiply(quantityInGrams).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+        BigDecimal carbohydrateConsumed = food.getCarbohydrate().multiply(quantityInGrams).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+        BigDecimal proteinConsumed = food.getProtein().multiply(quantityInGrams).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+        BigDecimal fatConsumed = food.getFat().multiply(quantityInGrams).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+        
+        FoodLog foodLog = FoodLogMapper.toEntity(foodLogRequestDTO, user, food, caloriesConsumed, carbohydrateConsumed, proteinConsumed, fatConsumed);
+        foodLog.setQuantityInGrams(quantityInGrams);
+        foodLog.setQuantityType(foodLogRequestDTO.getQuantityType());
+        foodLog.setQuantityValue(foodLogRequestDTO.getQuantity());
+        
         foodLogRepository.save(foodLog);
         return FoodLogMapper.toDTO(foodLog);
     }

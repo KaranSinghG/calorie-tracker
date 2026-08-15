@@ -6,12 +6,14 @@ import 'models/food.dart';
 class FoodLogInput {
   const FoodLogInput({
     required this.food,
-    required this.quantityInGrams,
+    required this.quantity,
+    required this.quantityType,
     required this.mealType,
   });
 
   final Food food;
-  final double quantityInGrams;
+  final double quantity;
+  final String quantityType; // 'GRAMS' or 'QUANTITY'
   final String mealType;
 }
 
@@ -48,6 +50,7 @@ class FoodPickerDialog extends StatefulWidget {
 
   String _query = '';
   String _mealType = 'BREAKFAST';
+  String _quantityType = 'GRAMS'; // 'GRAMS' or 'QUANTITY'
   Food? _selectedFood;
   String? _quantityError;
 
@@ -77,12 +80,14 @@ class FoodPickerDialog extends StatefulWidget {
   void _submit() {
     final quantity = double.tryParse(_quantityController.text.trim());
     if (quantity == null || quantity <= 0) {
-      setState(() => _quantityError = 'Enter a valid quantity in grams');
+      final unit = _quantityType == 'GRAMS' ? 'grams' : 'items';
+      setState(() => _quantityError = 'Enter a valid quantity in $unit');
       return;
     }
     Navigator.of(context).pop(FoodLogInput(
       food: _selectedFood!,
-      quantityInGrams: quantity,
+      quantity: quantity,
+      quantityType: _quantityType,
       mealType: _mealType,
     ));
   }  @override
@@ -204,6 +209,9 @@ class FoodPickerDialog extends StatefulWidget {
   }  // ---- Step 2: quantity + meal type ----
   Widget _buildAmountStep(Food food) {
     final theme = Theme.of(context);
+    final isGrams = _quantityType == 'GRAMS';
+    final quickValues = isGrams ? _quickQuantities : [1, 2, 3, 4, 5];
+    
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -227,10 +235,48 @@ class FoodPickerDialog extends StatefulWidget {
             ],
           ),
           Text(
-            '${food.calories.toStringAsFixed(0)} kcal per 100g',
+            isGrams
+                ? '${food.calories.toStringAsFixed(0)} kcal per 100g'
+                : '${(food.calories * food.perItemWeight / 100).toStringAsFixed(0)} kcal per item',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.outline,
             ),
+          ),
+          const SizedBox(height: 16),
+          // Quantity Type Toggle
+          Text(
+            'Measure by',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: ChoiceChip(
+                  label: const Text('Grams'),
+                  selected: _quantityType == 'GRAMS',
+                  onSelected: (_) => setState(() {
+                    _quantityType = 'GRAMS';
+                    _quantityController.text = '100';
+                    _quantityError = null;
+                  }),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ChoiceChip(
+                  label: Text('Items (${food.perItemWeight.toStringAsFixed(0)}g each)'),
+                  selected: _quantityType == 'QUANTITY',
+                  onSelected: (_) => setState(() {
+                    _quantityType = 'QUANTITY';
+                    _quantityController.text = '1';
+                    _quantityError = null;
+                  }),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           Text(
@@ -242,12 +288,13 @@ class FoodPickerDialog extends StatefulWidget {
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
-            children: _quickQuantities.map((grams) {
+            children: quickValues.map((value) {
+              final label = isGrams ? '${value}g' : '$value';
               return ChoiceChip(
-                label: Text('$grams g'),
-                selected: _quantityController.text == '$grams',
+                label: Text(label),
+                selected: _quantityController.text == '$value',
                 onSelected: (_) => setState(() {
-                  _quantityController.text = '$grams';
+                  _quantityController.text = '$value';
                   _quantityError = null;
                 }),
               );
@@ -261,10 +308,10 @@ class FoodPickerDialog extends StatefulWidget {
             onSubmitted: (_) => _submit(),
             onChanged: (_) => setState(() => _quantityError = null),
             decoration: InputDecoration(
-              labelText: 'Quantity (grams)',
-              hintText: 'e.g. 100',
+              labelText: isGrams ? 'Quantity (grams)' : 'Quantity (items)',
+              hintText: isGrams ? 'e.g. 100' : 'e.g. 2',
               border: const OutlineInputBorder(),
-              prefixIcon: const Icon(Icons.scale),
+              prefixIcon: Icon(isGrams ? Icons.scale : Icons.shopping_bag),
               errorText: _quantityError,
             ),
           ),

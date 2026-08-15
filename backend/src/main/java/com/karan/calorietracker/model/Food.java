@@ -24,6 +24,9 @@ public class Food extends BaseEntity {
 
     @Column(name = "fat", nullable = false, precision = 10, scale = 2)
     private BigDecimal fat;
+
+    @Column(name = "per_item_weight", nullable = false, precision = 10, scale = 2)
+    private BigDecimal perItemWeight;
     
     // Getters and Setters
     public String getName() {
@@ -64,6 +67,14 @@ public class Food extends BaseEntity {
 
     public void setFat(BigDecimal fat) {
         this.fat = fat;
+    }
+
+    public BigDecimal getPerItemWeight() {
+        return perItemWeight;
+    }
+
+    public void setPerItemWeight(BigDecimal perItemWeight) {
+        this.perItemWeight = perItemWeight;
     }
 
 }

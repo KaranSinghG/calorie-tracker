@@ -13,6 +13,8 @@ public class UserUpdateRequestDTO {
 
     @NotBlank(message = "Username is required")
     private String username;
+    @NotBlank(message = "Email is required")
+    private String email;
     @NotNull(message = "Age is required")
     @Min(value = 1, message = "Age must be greater than 0")
     private Integer age;
@@ -32,9 +34,10 @@ public class UserUpdateRequestDTO {
     public UserUpdateRequestDTO() {
     }
 
-    public UserUpdateRequestDTO(String username, Integer age, Gender gender, Double weight, Double height,
+    public UserUpdateRequestDTO(String username, String email, Integer age, Gender gender, Double weight, Double height,
             ActivityLevel activityLevel, GoalType goalType) {
         this.username = username;
+        this.email = email;
         this.age = age;
         this.gender = gender;
         this.weight = weight;
@@ -49,6 +52,14 @@ public class UserUpdateRequestDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Integer getAge() {

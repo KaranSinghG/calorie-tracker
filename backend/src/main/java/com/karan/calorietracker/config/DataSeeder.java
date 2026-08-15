@@ -56,50 +56,51 @@ public class DataSeeder {
     /**
      * Default catalog of everyday Indian diet foods, macros are per 100g (as served).
      * "Chicken Breast" is intentionally excluded so we do not touch the one already present.
+     * perItemWeight indicates average weight of one item/serving in grams.
      */
     private List<Food> defaultFoodCatalog() {
         return List.of(
                 // Grains & breads
-                food("Basmati Rice (Cooked)", "130", "25.2", "2.6", "0.3"),
-                food("Whole Wheat Roti",      "297", "49.0", "8.3", "7.0"),
-                food("Naan",                  "279", "48.9", "8.5", "5.8"),
-                food("Idli",                  "151", "27.5", "4.0", "2.1"),
-                food("Dosa",                  "198", "36.4", "3.6", "4.0"),
-                food("Poha (Beaten Rice)",    "175", "19.5", "3.5", "8.5"),
-                food("Upma",                  "170", "24.0", "3.5", "2.2"),
-                food("Khichdi",               "120", "21.0", "4.0", "2.5"),
+                foodWithWeight("Basmati Rice (Cooked)", "130", "25.2", "2.6", "0.3", "150"),     // 150g per serving bowl
+                foodWithWeight("Whole Wheat Roti",      "297", "49.0", "8.3", "7.0", "50"),      // 50g per roti
+                foodWithWeight("Naan",                  "279", "48.9", "8.5", "5.8", "125"),     // 125g per naan
+                foodWithWeight("Idli",                  "151", "27.5", "4.0", "2.1", "45"),      // 45g per idli
+                foodWithWeight("Dosa",                  "198", "36.4", "3.6", "4.0", "150"),     // 150g per dosa
+                foodWithWeight("Poha (Beaten Rice)",    "175", "19.5", "3.5", "8.5", "150"),     // 150g per serving
+                foodWithWeight("Upma",                  "170", "24.0", "3.5", "2.2", "150"),     // 150g per serving
+                foodWithWeight("Khichdi",               "120", "21.0", "4.0", "2.5", "150"),     // 150g per serving bowl
                 // Dals & pulses (cooked)
-                food("Toor Dal (Cooked)",     "100", "15.5", "6.0", "0.5"),
-                food("Moong Dal (Cooked)",    "105", "17.0", "7.0", "0.4"),
-                food("Masoor Dal (Cooked)",   "104", "18.0", "9.0", "0.4"),
-                food("Chana Dal (Cooked)",    "125", "25.0", "7.7", "1.2"),
-                food("Rajma (Kidney Beans)",  "127", "22.8", "8.7", "0.5"),
-                food("Chole (Chickpea Curry)","149", "22.0", "8.5", "3.5"),
-                food("Sambhar",               "55",  "8.0",  "3.0", "1.5"),
+                foodWithWeight("Toor Dal (Cooked)",     "100", "15.5", "6.0", "0.5", "200"),     // 200g per serving bowl
+                foodWithWeight("Moong Dal (Cooked)",    "105", "17.0", "7.0", "0.4", "200"),     // 200g per serving bowl
+                foodWithWeight("Masoor Dal (Cooked)",   "104", "18.0", "9.0", "0.4", "200"),     // 200g per serving bowl
+                foodWithWeight("Chana Dal (Cooked)",    "125", "25.0", "7.7", "1.2", "200"),     // 200g per serving bowl
+                foodWithWeight("Rajma (Kidney Beans)",  "127", "22.8", "8.7", "0.5", "200"),     // 200g per serving bowl
+                foodWithWeight("Chole (Chickpea Curry)","149", "22.0", "8.5", "3.5", "200"),     // 200g per serving bowl
+                foodWithWeight("Sambhar",               "55",  "8.0",  "3.0", "1.5", "200"),     // 200g per serving
                 // Vegetables & curries
-                food("Palak Paneer",          "180", "6.0",  "8.0",  "13.0"),
-                food("Mixed Vegetable Sabzi", "80",  "10.0", "2.5", "3.5"),
-                food("Aloo Sabzi",            "110", "12.0", "1.8", "6.0"),
-                food("Bhindi (Okra)",         "65",  "7.5",  "1.9", "0.2"),
-                food("Baingan Bharta",        "85",  "7.0",  "1.5", "5.0"),
+                foodWithWeight("Palak Paneer",          "180", "6.0",  "8.0",  "13.0", "200"),   // 200g per serving
+                foodWithWeight("Mixed Vegetable Sabzi", "80",  "10.0", "2.5", "3.5", "150"),    // 150g per serving
+                foodWithWeight("Aloo Sabzi",            "110", "12.0", "1.8", "6.0", "150"),    // 150g per serving
+                foodWithWeight("Bhindi (Okra)",         "65",  "7.5",  "1.9", "0.2", "120"),    // 120g per serving
+                foodWithWeight("Baingan Bharta",        "85",  "7.0",  "1.5", "5.0", "150"),    // 150g per serving
                 // Dairy
-                food("Paneer",                "265", "1.6",  "18.0", "20.8"),
-                food("Curd (Dahi)",           "61",  "4.7",  "3.5", "3.3"),
-                food("Buttermilk",            "62",  "4.5",  "2.0", "1.5"),
-                food("Milk (Buffalo)",        "97",  "5.2",  "3.6", "6.6"),
+                foodWithWeight("Paneer",                "265", "1.6",  "18.0", "20.8", "30"),   // 30g per chunk
+                foodWithWeight("Curd (Dahi)",           "61",  "4.7",  "3.5", "3.3", "250"),    // 250ml/250g per cup
+                foodWithWeight("Buttermilk",            "62",  "4.5",  "2.0", "1.5", "250"),    // 250ml/250g per glass
+                foodWithWeight("Milk (Buffalo)",        "97",  "5.2",  "3.6", "6.6", "250"),    // 250ml/250g per glass
                 // Protein
-                food("Egg",                   "143", "1.1",  "12.6", "9.5"),
-                food("Chicken Curry",         "130", "4.0",  "15.0", "6.0"),
-                food("Mutton Curry",          "260", "8.0",  "17.0", "18.0"),
-                food("Fish (Fresh Water)",    "150", "0.0",  "17.5", "4.2"),
+                foodWithWeight("Egg",                   "143", "1.1",  "12.6", "9.5", "50"),    // 50g per egg
+                foodWithWeight("Chicken Curry",         "130", "4.0",  "15.0", "6.0", "150"),   // 150g per serving
+                foodWithWeight("Mutton Curry",          "260", "8.0",  "17.0", "18.0", "150"),  // 150g per serving
+                foodWithWeight("Fish (Fresh Water)",    "150", "0.0",  "17.5", "4.2", "150"),   // 150g per serving
                 // Fruits
-                food("Mango",                 "60",  "15.0", "0.8", "0.4"),
-                food("Banana",                "89",  "22.8", "1.1", "0.3"),
-                food("Guava",                 "68",  "14.9", "2.5", "0.7"),
-                food("Dates",                 "282", "75.0", "2.5", "0.4"),
+                foodWithWeight("Mango",                 "60",  "15.0", "0.8", "0.4", "300"),    // 300g per medium mango
+                foodWithWeight("Banana",                "89",  "22.8", "1.1", "0.3", "120"),    // 120g per medium banana
+                foodWithWeight("Guava",                 "68",  "14.9", "2.5", "0.7", "200"),    // 200g per guava
+                foodWithWeight("Dates",                 "282", "75.0", "2.5", "0.4", "25"),     // 25g per date
                 // Nuts & protein snacks
-                food("Peanuts",               "587", "12.5", "25.4", "49.5"),
-                food("Almonds",               "579", "21.6", "21.2", "49.5")
+                foodWithWeight("Peanuts",               "587", "12.5", "25.4", "49.5", "28"),   // 28g per ounce/serving
+                foodWithWeight("Almonds",               "579", "21.6", "21.2", "49.5", "28")    // 28g per ounce/serving
         );
     }
 
@@ -110,6 +111,18 @@ public class DataSeeder {
         food.setCarbohydrate(new BigDecimal(carbohydrates));
         food.setProtein(new BigDecimal(protein));
         food.setFat(new BigDecimal(fat));
+        food.setPerItemWeight(new BigDecimal("100")); // Default fallback
+        return food;
+    }
+
+    private Food foodWithWeight(String name, String calories, String carbohydrates, String protein, String fat, String perItemWeight) {
+        Food food = new Food();
+        food.setName(name);
+        food.setCalories(new BigDecimal(calories));
+        food.setCarbohydrate(new BigDecimal(carbohydrates));
+        food.setProtein(new BigDecimal(protein));
+        food.setFat(new BigDecimal(fat));
+        food.setPerItemWeight(new BigDecimal(perItemWeight));
         return food;
     }
 }

@@ -3,6 +3,7 @@ package com.karan.calorietracker.model;
 import java.math.BigDecimal;
 
 import com.karan.calorietracker.model.enums.MealType;
+import com.karan.calorietracker.model.enums.QuantityType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,8 +30,12 @@ public class FoodLog extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MealType mealType;
 
+    @Column(name = "quantity_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private QuantityType quantityType;
+
     @Column(name = "quantity_in_grams", nullable = false, precision = 10, scale = 2)
-    private BigDecimal quantityInGrams;
+    private BigDecimal quantityValue;
 
     @Column(name = "calories_consumed", nullable = false, precision = 10, scale = 2)
     private BigDecimal caloriesConsumed;
@@ -69,12 +74,28 @@ public class FoodLog extends BaseEntity {
         this.mealType = mealType;
     }
 
+    public QuantityType getQuantityType() {
+        return quantityType;
+    }
+
+    public void setQuantityType(QuantityType quantityType) {
+        this.quantityType = quantityType;
+    }
+
+    public BigDecimal getQuantityValue() {
+        return quantityValue;
+    }
+
+    public void setQuantityValue(BigDecimal quantityValue) {
+        this.quantityValue = quantityValue;
+    }
+
     public BigDecimal getQuantityInGrams() {
-        return quantityInGrams;
+        return quantityValue;
     }
 
     public void setQuantityInGrams(BigDecimal quantityInGrams) {
-        this.quantityInGrams = quantityInGrams;
+        this.quantityValue = quantityInGrams;
     }
 
     public BigDecimal getCaloriesConsumed() {

@@ -3,6 +3,7 @@ package com.karan.calorietracker.dto.request;
 import java.math.BigDecimal;
 
 import com.karan.calorietracker.model.enums.MealType;
+import com.karan.calorietracker.model.enums.QuantityType;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -13,19 +14,22 @@ public class FoodLogRequestDTO {
     private Long userId;
     @NotNull(message = "Food ID is required")
     private Long foodId;
-    @NotNull(message = "Quantity in grams is required")
-    @DecimalMin(value = "0.1", message = "Quantity in grams must be greater than or equal to 0.1")
-    private BigDecimal quantityInGrams;
+    @NotNull(message = "Quantity is required")
+    @DecimalMin(value = "0.1", message = "Quantity must be greater than or equal to 0.1")
+    private BigDecimal quantity;
+    @NotNull(message = "Quantity Type is required")
+    private QuantityType quantityType;
     @NotNull(message = "Meal Type is required")
     private MealType mealType;
 
     public FoodLogRequestDTO() {
     }
 
-    public FoodLogRequestDTO(Long userId, Long foodId, BigDecimal quantityInGrams, MealType mealType) {
+    public FoodLogRequestDTO(Long userId, Long foodId, BigDecimal quantity, QuantityType quantityType, MealType mealType) {
         this.userId = userId;
         this.foodId = foodId;
-        this.quantityInGrams = quantityInGrams;
+        this.quantity = quantity;
+        this.quantityType = quantityType;
         this.mealType = mealType;
     }
 
@@ -45,12 +49,20 @@ public class FoodLogRequestDTO {
         this.foodId = foodId;
     }
 
-    public BigDecimal getQuantityInGrams() {
-        return quantityInGrams;
+    public BigDecimal getQuantity() {
+        return quantity;
     }
 
-    public void setQuantityInGrams(BigDecimal quantityInGrams) {
-        this.quantityInGrams = quantityInGrams;
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
+
+    public QuantityType getQuantityType() {
+        return quantityType;
+    }
+
+    public void setQuantityType(QuantityType quantityType) {
+        this.quantityType = quantityType;
     }
 
     public MealType getMealType() {
@@ -59,6 +71,18 @@ public class FoodLogRequestDTO {
 
     public void setMealType(MealType mealType) {
         this.mealType = mealType;
+    }
+
+    // Backward compatibility: for old API clients using quantityInGrams
+    @Deprecated
+    public BigDecimal getQuantityInGrams() {
+        return quantity;
+    }
+
+    @Deprecated
+    public void setQuantityInGrams(BigDecimal quantityInGrams) {
+        this.quantity = quantityInGrams;
+        this.quantityType = QuantityType.GRAMS;
     }
 
 }

@@ -57,7 +57,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(Long id, UserUpdateRequestDTO updateRequestDTO) {
         User user = findById(id);
+        
+        // Check if username is being changed and if it already exists (and belongs to a different user)
+        if (!user.getUsername().equals(updateRequestDTO.getUsername())) {
+            userRepository.findByUsername(updateRequestDTO.getUsername())
+                    .ifPresent(existingUser -> {
+                        if (!existingUser.getId().equals(user.getId())) {
+                            throw new IllegalArgumentException("Username already taken");
+                        }
+                    });
+        }
+        
+        // Check if email is being changed and if it already exists (and belongs to a different user)
+        if (!user.getEmail().equals(updateRequestDTO.getEmail())) {
+            userRepository.findByEmail(updateRequestDTO.getEmail())
+                    .ifPresent(existingUser -> {
+                        if (!existingUser.getId().equals(user.getId())) {
+                            throw new IllegalArgumentException("Email already in use");
+                        }
+                    });
+        }
+        
         user.setUsername(updateRequestDTO.getUsername());
+        user.setEmail(updateRequestDTO.getEmail());
         user.setAge(updateRequestDTO.getAge());
         user.setGender(updateRequestDTO.getGender());
         user.setWeight(updateRequestDTO.getWeight());
