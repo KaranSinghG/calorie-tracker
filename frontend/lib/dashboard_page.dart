@@ -111,8 +111,8 @@ class _DashboardPageState extends State<DashboardPage> {
       await _apiService.logFood(
         userId: _user!.id,
         foodId: input.food.id,
-        quantity: input.quantity,
-        quantityType: input.quantityType,
+        amount: input.quantity,
+        unit: input.quantityType,
         mealType: input.mealType,
       );
       await _loadDashboardData();

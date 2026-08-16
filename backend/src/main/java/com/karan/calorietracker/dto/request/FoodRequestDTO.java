@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class FoodRequestDTO {
-    
+
     @NotBlank(message = "Food name is required")
     private String name;
     @NotNull(message = "Calories is required")
@@ -22,16 +22,24 @@ public class FoodRequestDTO {
     @NotNull(message = "Fat is required")
     @DecimalMin(value = "0", message = "Fat must be greater than or equal to 0")
     private BigDecimal fat;
+    @NotNull(message = "Per item weight is required")
+    @DecimalMin(value = "0.1", message = "Per item weight must be greater than or equal to 0.1")
+    private BigDecimal perItemWeight;
+
+    @NotNull(message = "supportItemQuantity is required")
+    private Boolean supportItemQuantity = false;
 
     public FoodRequestDTO() {
     }
 
-    public FoodRequestDTO(String name, BigDecimal calories, BigDecimal carbohydrate, BigDecimal protein, BigDecimal fat) {
+    public FoodRequestDTO(String name, BigDecimal calories, BigDecimal carbohydrate, BigDecimal protein,
+            BigDecimal fat, BigDecimal perItemWeight) {
         this.name = name;
         this.calories = calories;
         this.carbohydrate = carbohydrate;
         this.protein = protein;
         this.fat = fat;
+        this.perItemWeight = perItemWeight;
     }
 
     public String getName() {
@@ -72,5 +80,21 @@ public class FoodRequestDTO {
 
     public void setFat(BigDecimal fat) {
         this.fat = fat;
+    }
+
+    public BigDecimal getPerItemWeight() {
+        return perItemWeight;
+    }
+
+    public void setPerItemWeight(BigDecimal perItemWeight) {
+        this.perItemWeight = perItemWeight;
+    }
+
+    public Boolean getSupportItemQuantity() {
+        return supportItemQuantity;
+    }
+
+    public void setSupportItemQuantity(Boolean supportItemQuantity) {
+        this.supportItemQuantity = supportItemQuantity;
     }
 }

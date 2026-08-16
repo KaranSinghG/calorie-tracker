@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'models/food.dart';
+import 'services/api_service.dart';
 
 /// Result of the food picker dialog, ready to be logged via the API.
 class FoodLogInput {
@@ -39,11 +40,12 @@ class FoodPickerDialog extends StatefulWidget {
   };
   static const List<int> _quickQuantities = [50, 100, 150, 200, 300];
 
+  final _apiService = ApiService();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _quantityController =
       TextEditingController(text: '100');
 
-  late final List<Food> _sortedFoods = [...widget.foods]..sort((a, b) {
+  late List<Food> _foods = [...widget.foods]..sort((a, b) {
       final byName = a.name.toLowerCase().compareTo(b.name.toLowerCase());
       return byName != 0 ? byName : a.id.compareTo(b.id);
     });
@@ -56,10 +58,32 @@ class FoodPickerDialog extends StatefulWidget {
 
   List<Food> get _filteredFoods {
     final q = _query.trim().toLowerCase();
-    if (q.isEmpty) return _sortedFoods;
-    return _sortedFoods
+    if (q.isEmpty) return _foods;
+    return _foods
         .where((food) => food.name.toLowerCase().contains(q))
         .toList();
+  }
+
+  Future<void> _addCustomFood() async {
+    final createdFood = await showDialog<Food>(
+      context: context,
+      builder: (_) => const _CreateCustomFoodDialog(),
+    );
+
+    if (createdFood == null) return;
+
+    setState(() {
+      _foods = [..._foods, createdFood]
+        ..sort((a, b) {
+          final byName = a.name.toLowerCase().compareTo(b.name.toLowerCase());
+          return byName != 0 ? byName : a.id.compareTo(b.id);
+        });
+      _selectedFood = createdFood;
+      _quantityController.text = '100';
+      _query = '';
+      _searchController.clear();
+      _quantityError = null;
+    });
   }
 
   @override
@@ -129,26 +153,37 @@ class FoodPickerDialog extends StatefulWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextField(
-            controller: _searchController,
-            autofocus: true,
-            onChanged: (value) => setState(() => _query = value),
-            decoration: InputDecoration(
-              hintText: 'Search food (e.g. dal, roti, paneer)',
-              prefixIcon: const Icon(Icons.search),
-              border: const OutlineInputBorder(),
-              isDense: true,
-              suffixIcon: _query.isEmpty
-                  ? null
-                  : IconButton(
-                      tooltip: 'Clear search',
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        _searchController.clear();
-                        setState(() => _query = '');
-                      },
-                    ),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  onChanged: (value) => setState(() => _query = value),
+                  decoration: InputDecoration(
+                    hintText: 'Search food (e.g. dal, roti, paneer)',
+                    prefixIcon: const Icon(Icons.search),
+                    border: const OutlineInputBorder(),
+                    isDense: true,
+                    suffixIcon: _query.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: 'Clear search',
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _query = '');
+                            },
+                          ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              FilledButton.tonal(
+                onPressed: _addCustomFood,
+                child: const Text('Add custom'),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           Expanded(
@@ -206,12 +241,14 @@ class FoodPickerDialog extends StatefulWidget {
       trailing: const Icon(Icons.keyboard_arrow_right),
       onTap: () => _selectFood(food),
     );
-  }  // ---- Step 2: quantity + meal type ----
+  }
+
+  // ---- Step 2: quantity + meal type ----
   Widget _buildAmountStep(Food food) {
     final theme = Theme.of(context);
     final isGrams = _quantityType == 'GRAMS';
     final quickValues = isGrams ? _quickQuantities : [1, 2, 3, 4, 5];
-    
+
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -243,7 +280,6 @@ class FoodPickerDialog extends StatefulWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // Quantity Type Toggle
           Text(
             'Measure by',
             style: theme.textTheme.labelLarge?.copyWith(
@@ -251,33 +287,50 @@ class FoodPickerDialog extends StatefulWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: ChoiceChip(
-                  label: const Text('Grams'),
-                  selected: _quantityType == 'GRAMS',
-                  onSelected: (_) => setState(() {
-                    _quantityType = 'GRAMS';
-                    _quantityController.text = '100';
-                    _quantityError = null;
-                  }),
+          if (food.supportItemQuantity) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: ChoiceChip(
+                    label: const Text('Grams'),
+                    selected: _quantityType == 'GRAMS',
+                    onSelected: (_) => setState(() {
+                      _quantityType = 'GRAMS';
+                      _quantityController.text = '100';
+                      _quantityError = null;
+                    }),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ChoiceChip(
+                    label: Text('Items (${food.perItemWeight.toStringAsFixed(0)}g each)'),
+                    selected: _quantityType == 'QUANTITY',
+                    onSelected: (_) => setState(() {
+                      _quantityType = 'QUANTITY';
+                      _quantityController.text = '1';
+                      _quantityError = null;
+                    }),
+                  ),
+                ),
+              ],
+            ),
+          ] else ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Measured in: Grams only',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: ChoiceChip(
-                  label: Text('Items (${food.perItemWeight.toStringAsFixed(0)}g each)'),
-                  selected: _quantityType == 'QUANTITY',
-                  onSelected: (_) => setState(() {
-                    _quantityType = 'QUANTITY';
-                    _quantityController.text = '1';
-                    _quantityError = null;
-                  }),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
           const SizedBox(height: 16),
           Text(
             'Quantity',
@@ -289,7 +342,7 @@ class FoodPickerDialog extends StatefulWidget {
           Wrap(
             spacing: 8,
             children: quickValues.map((value) {
-              final label = isGrams ? '${value}g' : '$value';
+              final label = isGrams ? '${value} g' : '$value';
               return ChoiceChip(
                 label: Text(label),
                 selected: _quantityController.text == '$value',
@@ -335,6 +388,176 @@ class FoodPickerDialog extends StatefulWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _CreateCustomFoodDialog extends StatefulWidget {
+  const _CreateCustomFoodDialog();
+
+  @override
+  State<_CreateCustomFoodDialog> createState() => _CreateCustomFoodDialogState();
+}
+
+class _CreateCustomFoodDialogState extends State<_CreateCustomFoodDialog> {
+  final _apiService = ApiService();
+  final _nameController = TextEditingController();
+  final _caloriesController = TextEditingController();
+  final _carbsController = TextEditingController();
+  final _proteinController = TextEditingController();
+  final _fatController = TextEditingController();
+  final _weightController = TextEditingController(text: '100');
+  String? _error;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _caloriesController.dispose();
+    _carbsController.dispose();
+    _proteinController.dispose();
+    _fatController.dispose();
+    _weightController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final name = _nameController.text.trim();
+    final calories = double.tryParse(_caloriesController.text.trim());
+    final carbs = double.tryParse(_carbsController.text.trim());
+    final protein = double.tryParse(_proteinController.text.trim());
+    final fat = double.tryParse(_fatController.text.trim());
+    final weight = double.tryParse(_weightController.text.trim());
+
+    if (name.isEmpty ||
+        calories == null ||
+        carbs == null ||
+        protein == null ||
+        fat == null ||
+        weight == null ||
+        weight <= 0) {
+      setState(() => _error = 'Please complete all fields with valid values.');
+      return;
+    }
+
+    try {
+      final food = await _apiService.createFood(
+        name: name,
+        calories: calories,
+        carbohydrate: carbs,
+        protein: protein,
+        fat: fat,
+        perItemWeight: weight,
+      );
+      if (!context.mounted) return;
+      Navigator.of(context).pop(food);
+    } catch (e) {
+      setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add custom food'),
+      content: SizedBox(
+        width: 420,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Food name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _caloriesController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(
+                        labelText: 'Calories',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: _weightController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(
+                        labelText: 'Per item (g)',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _carbsController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(
+                        labelText: 'Carbs (g)',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: _proteinController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(
+                        labelText: 'Protein (g)',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _fatController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  labelText: 'Fat (g)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _error!,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton.icon(
+          onPressed: _submit,
+          icon: const Icon(Icons.save),
+          label: const Text('Save food'),
+        ),
+      ],
     );
   }
 }

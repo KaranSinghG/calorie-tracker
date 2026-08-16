@@ -10,19 +10,23 @@ public class FoodResponseDTO {
     private BigDecimal carbohydrate;
     private BigDecimal protein;
     private BigDecimal fat;
+    private BigDecimal perItemWeight;
+    private Boolean supportItemQuantity;
     private LocalDateTime createdAt;
-    
+
     public FoodResponseDTO() {
     }
 
     public FoodResponseDTO(Long id, String name, BigDecimal calories, BigDecimal carbohydrate, BigDecimal protein,
-            BigDecimal fat, LocalDateTime createdAt) {
+            BigDecimal fat, BigDecimal perItemWeight, Boolean supportItemQuantity, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.calories = calories;
         this.carbohydrate = carbohydrate;
         this.protein = protein;
         this.fat = fat;
+        this.perItemWeight = perItemWeight;
+        this.supportItemQuantity = supportItemQuantity;
         this.createdAt = createdAt;
     }
 
@@ -48,6 +52,14 @@ public class FoodResponseDTO {
 
     public BigDecimal getFat() {
         return fat;
+    }
+
+    public BigDecimal getPerItemWeight() {
+        return perItemWeight;
+    }
+
+    public Boolean getSupportItemQuantity() {
+        return supportItemQuantity;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -10,7 +10,7 @@ import 'package:frontend/models/food.dart';
 void main() {
   testWidgets('picker handles mouse hover, search, selection and submit',
       (tester) async {
-    final foods = [
+    final List<Food> foods = [
       Food(id: 1, name: 'Basmati Rice', calories: 356, carbohydrate: 77.0, protein: 7.1, fat: 0.6),
       Food(id: 2, name: 'Whole Wheat Roti', calories: 297, carbohydrate: 47.0, protein: 7.8, fat: 0.9),
       Food(id: 3, name: 'Toor Dal', calories: 116, carbohydrate: 20.0, protein: 7.2, fat: 0.4),

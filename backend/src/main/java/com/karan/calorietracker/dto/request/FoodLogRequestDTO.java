@@ -9,27 +9,27 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
 public class FoodLogRequestDTO {
-    
+
     @NotNull(message = "User ID is required")
     private Long userId;
     @NotNull(message = "Food ID is required")
     private Long foodId;
-    @NotNull(message = "Quantity is required")
-    @DecimalMin(value = "0.1", message = "Quantity must be greater than or equal to 0.1")
-    private BigDecimal quantity;
-    @NotNull(message = "Quantity Type is required")
-    private QuantityType quantityType;
+    @NotNull(message = "Amount is required")
+    @DecimalMin(value = "0.1", message = "Amount must be greater than or equal to 0.1")
+    private BigDecimal amount;
+    @NotNull(message = "Unit is required")
+    private QuantityType unit;
     @NotNull(message = "Meal Type is required")
     private MealType mealType;
 
     public FoodLogRequestDTO() {
     }
 
-    public FoodLogRequestDTO(Long userId, Long foodId, BigDecimal quantity, QuantityType quantityType, MealType mealType) {
+    public FoodLogRequestDTO(Long userId, Long foodId, BigDecimal amount, QuantityType unit, MealType mealType) {
         this.userId = userId;
         this.foodId = foodId;
-        this.quantity = quantity;
-        this.quantityType = quantityType;
+        this.amount = amount;
+        this.unit = unit;
         this.mealType = mealType;
     }
 
@@ -49,20 +49,20 @@ public class FoodLogRequestDTO {
         this.foodId = foodId;
     }
 
-    public BigDecimal getQuantity() {
-        return quantity;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
-    public QuantityType getQuantityType() {
-        return quantityType;
+    public QuantityType getUnit() {
+        return unit;
     }
 
-    public void setQuantityType(QuantityType quantityType) {
-        this.quantityType = quantityType;
+    public void setUnit(QuantityType unit) {
+        this.unit = unit;
     }
 
     public MealType getMealType() {
@@ -72,17 +72,4 @@ public class FoodLogRequestDTO {
     public void setMealType(MealType mealType) {
         this.mealType = mealType;
     }
-
-    // Backward compatibility: for old API clients using quantityInGrams
-    @Deprecated
-    public BigDecimal getQuantityInGrams() {
-        return quantity;
-    }
-
-    @Deprecated
-    public void setQuantityInGrams(BigDecimal quantityInGrams) {
-        this.quantity = quantityInGrams;
-        this.quantityType = QuantityType.GRAMS;
-    }
-
 }

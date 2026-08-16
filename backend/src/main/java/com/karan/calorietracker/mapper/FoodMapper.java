@@ -13,12 +13,14 @@ public class FoodMapper {
         food.setCarbohydrate(dto.getCarbohydrate());
         food.setProtein(dto.getProtein());
         food.setFat(dto.getFat());
+        food.setPerItemWeight(dto.getPerItemWeight());
+        food.setSupportItemQuantity(dto.getSupportItemQuantity());
         return food;
     }
 
     public static FoodResponseDTO toResponseDto(Food food){
         FoodResponseDTO responseDTO = new FoodResponseDTO(food.getId(), food.getName(), food.getCalories(), food.getCarbohydrate(), food.getProtein(),
-                food.getFat(), food.getCreatedAt());
+                food.getFat(), food.getPerItemWeight(), food.getSupportItemQuantity(), food.getCreatedAt());
         return responseDTO;
     }
 }

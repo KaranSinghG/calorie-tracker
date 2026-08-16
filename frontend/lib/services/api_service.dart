@@ -45,6 +45,25 @@ class ApiService {
         .toList();
   }
 
+  Future<Food> createFood({
+    required String name,
+    required double calories,
+    required double carbohydrate,
+    required double protein,
+    required double fat,
+    required double perItemWeight,
+  }) async {
+    final json = await _apiClient.post('/foods/create', body: {
+      'name': name,
+      'calories': calories,
+      'carbohydrate': carbohydrate,
+      'protein': protein,
+      'fat': fat,
+      'perItemWeight': perItemWeight,
+    });
+    return Food.fromJson(json as Map<String, dynamic>);
+  }
+
   // ── Food Logs ──────────────────────────────────────────────────────────────
   Future<DailySummary> getDailySummary(DateTime date) async {
     final dateStr =
@@ -66,15 +85,15 @@ class ApiService {
   Future<FoodLog> logFood({
     required int userId,
     required int foodId,
-    required double quantity,
-    required String quantityType,
+    required double amount,
+    required String unit,
     required String mealType,
   }) async {
     final json = await _apiClient.post('/food-logs/log', body: {
       'userId': userId,
       'foodId': foodId,
-      'quantity': quantity,
-      'quantityType': quantityType,
+      'amount': amount,
+      'unit': unit,
       'mealType': mealType,
     });
     return FoodLog.fromJson(json as Map<String, dynamic>);

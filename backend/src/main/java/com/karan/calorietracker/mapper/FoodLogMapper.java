@@ -16,7 +16,7 @@ public class FoodLogMapper {
         FoodLog foodLog = new FoodLog();
         foodLog.setFood(food);
         foodLog.setUser(user);
-        foodLog.setQuantityInGrams(dto.getQuantityInGrams());
+        foodLog.setQuantityInGrams(dto.getAmount());
         foodLog.setMealType(dto.getMealType());
         foodLog.setCaloriesConsumed(caloriesConsumed);
         foodLog.setCarbohydrateConsumed(carbohydrateConsumed);

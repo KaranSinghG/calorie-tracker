@@ -6,6 +6,7 @@ class Food {
   final double protein;
   final double fat;
   final double perItemWeight;
+  final bool supportItemQuantity;
 
   Food({
     required this.id,
@@ -14,7 +15,8 @@ class Food {
     required this.carbohydrate,
     required this.protein,
     required this.fat,
-    required this.perItemWeight,
+    this.perItemWeight = 100.0,
+    this.supportItemQuantity = false,
   });
 
   factory Food.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class Food {
       protein: (json['protein'] as num).toDouble(),
       fat: (json['fat'] as num).toDouble(),
       perItemWeight: (json['perItemWeight'] as num?)?.toDouble() ?? 100.0,
+      supportItemQuantity: (json['supportItemQuantity'] as bool?) ?? false,
     );
   }
 }
