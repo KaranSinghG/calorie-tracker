@@ -28,7 +28,7 @@ public class Food extends BaseEntity {
     @Column(name = "per_item_weight", nullable = false, precision = 10, scale = 2)
     private BigDecimal perItemWeight;
 
-    @Column(name = "support_item_quantity", nullable = false)
+    @Column(name = "support_item_quantity", nullable = false, columnDefinition = "boolean default false")
     private Boolean supportItemQuantity = false;
     
     // Getters and Setters
