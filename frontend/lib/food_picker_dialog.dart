@@ -319,7 +319,7 @@ class FoodPickerDialog extends StatefulWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -342,7 +342,7 @@ class FoodPickerDialog extends StatefulWidget {
           Wrap(
             spacing: 8,
             children: quickValues.map((value) {
-              final label = isGrams ? '${value} g' : '$value';
+              final label = isGrams ? '$value g' : '$value';
               return ChoiceChip(
                 label: Text(label),
                 selected: _quantityController.text == '$value',
