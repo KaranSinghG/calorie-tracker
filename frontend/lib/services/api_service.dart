@@ -52,6 +52,7 @@ class ApiService {
     required double protein,
     required double fat,
     required double perItemWeight,
+    bool supportItemQuantity = false,
   }) async {
     final json = await _apiClient.post('/foods/create', body: {
       'name': name,
@@ -60,6 +61,7 @@ class ApiService {
       'protein': protein,
       'fat': fat,
       'perItemWeight': perItemWeight,
+      'supportItemQuantity': supportItemQuantity,
     });
     return Food.fromJson(json as Map<String, dynamic>);
   }

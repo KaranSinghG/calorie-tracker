@@ -406,7 +406,8 @@ class _CreateCustomFoodDialogState extends State<_CreateCustomFoodDialog> {
   final _carbsController = TextEditingController();
   final _proteinController = TextEditingController();
   final _fatController = TextEditingController();
-  final _weightController = TextEditingController(text: '100');
+  final _weightController = TextEditingController();
+  bool _supportItemQuantity = false;
   String? _error;
 
   @override
@@ -426,17 +427,24 @@ class _CreateCustomFoodDialogState extends State<_CreateCustomFoodDialog> {
     final carbs = double.tryParse(_carbsController.text.trim());
     final protein = double.tryParse(_proteinController.text.trim());
     final fat = double.tryParse(_fatController.text.trim());
-    final weight = double.tryParse(_weightController.text.trim());
 
     if (name.isEmpty ||
         calories == null ||
         carbs == null ||
         protein == null ||
-        fat == null ||
-        weight == null ||
-        weight <= 0) {
-      setState(() => _error = 'Please complete all fields with valid values.');
+        fat == null) {
+      setState(() => _error = 'Please complete all required fields with valid values.');
       return;
+    }
+
+    double weight = 100.0;
+    if (_supportItemQuantity) {
+      final parsedWeight = double.tryParse(_weightController.text.trim());
+      if (parsedWeight == null || parsedWeight <= 0) {
+        setState(() => _error = 'Please enter a valid weight per item in grams.');
+        return;
+      }
+      weight = parsedWeight;
     }
 
     try {
@@ -447,6 +455,7 @@ class _CreateCustomFoodDialogState extends State<_CreateCustomFoodDialog> {
         protein: protein,
         fat: fat,
         perItemWeight: weight,
+        supportItemQuantity: _supportItemQuantity,
       );
       if (!context.mounted) return;
       Navigator.of(context).pop(food);
@@ -490,10 +499,12 @@ class _CreateCustomFoodDialogState extends State<_CreateCustomFoodDialog> {
                   Expanded(
                     child: TextField(
                       controller: _weightController,
+                      enabled: _supportItemQuantity,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Per item (g)',
-                        border: OutlineInputBorder(),
+                        hintText: _supportItemQuantity ? 'e.g. 50' : null,
+                        border: const OutlineInputBorder(),
                       ),
                     ),
                   ),
@@ -533,6 +544,19 @@ class _CreateCustomFoodDialogState extends State<_CreateCustomFoodDialog> {
                   labelText: 'Fat (g)',
                   border: OutlineInputBorder(),
                 ),
+              ),
+              const SizedBox(height: 8),
+              CheckboxListTile(
+                title: const Text('Support item quantity'),
+                subtitle: const Text('Allow logging by item or piece count'),
+                value: _supportItemQuantity,
+                onChanged: (bool? val) {
+                  setState(() {
+                    _supportItemQuantity = val ?? false;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
               ),
               if (_error != null) ...[
                 const SizedBox(height: 12),
