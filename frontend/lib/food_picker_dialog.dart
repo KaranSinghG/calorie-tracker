@@ -40,7 +40,6 @@ class FoodPickerDialog extends StatefulWidget {
   };
   static const List<int> _quickQuantities = [50, 100, 150, 200, 300];
 
-  final _apiService = ApiService();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _quantityController =
       TextEditingController(text: '100');

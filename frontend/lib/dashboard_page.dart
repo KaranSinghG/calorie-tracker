@@ -635,9 +635,6 @@ class _DashboardPageState extends State<DashboardPage> {
     double? target,
   }) {
     // Calculate progress towards target (if target exists)
-    final double progressPercentage = target != null && target > 0 
-        ? (value / target * 100).clamp(0.0, 100.0)
-        : 0.0;
     
     // Determine if target is met, exceeded, or needs more
     final isTargetMet = target != null && value >= target;
