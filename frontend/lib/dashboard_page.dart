@@ -21,6 +21,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   final _apiService = ApiService();
+  final _authService = AuthService();
   bool _isHovering = false;
   bool _isLoading = true;
   String? _errorMessage;
@@ -68,8 +69,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _signOut(BuildContext context) async {
-    final authService = AuthService();
-    await authService.logout();
+    await _authService.logout();
     if (!context.mounted) return;
     Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
   }
@@ -78,6 +78,7 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() {
       _selectedDate = date;
       _isLoading = true;
+      _errorMessage = null;
     });
 
     try {
@@ -116,7 +117,7 @@ class _DashboardPageState extends State<DashboardPage> {
         mealType: input.mealType,
       );
       await _loadDashboardData();
-      if (mounted) {
+      if (mounted && _errorMessage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Food logged successfully')),
         );
@@ -136,7 +137,7 @@ class _DashboardPageState extends State<DashboardPage> {
     try {
       await _apiService.deleteFoodLog(log.id);
       await _loadDashboardData();
-      if (mounted) {
+      if (mounted && _errorMessage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Food log deleted')),
         );
@@ -164,7 +165,7 @@ class _DashboardPageState extends State<DashboardPage> {
         _user = updated;
       });
       await _loadDashboardData();
-      if (mounted) {
+      if (mounted && _errorMessage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile updated successfully')),
         );
@@ -386,22 +387,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    children: [
-                      Text(
-                        isToday
-                            ? 'Today'
-                            : _formatDate(_selectedDate),
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      if (!isToday)
-                        Text(
-                          _formatDate(_selectedDate),
-                          style: Theme.of(context).textTheme.bodySmall,
+                  child: Text(
+                    isToday
+                        ? 'Today · ${_formatDate(_selectedDate)}'
+                        : _formatDate(_selectedDate),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                    ],
                   ),
                 ),
               ),
