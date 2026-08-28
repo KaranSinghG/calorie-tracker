@@ -626,11 +626,27 @@ class _DashboardPageState extends State<DashboardPage> {
     required IconData icon,
     double? target,
   }) {
-    // Calculate progress towards target (if target exists)
-    
-    // Determine if target is met, exceeded, or needs more
-    final isTargetMet = target != null && value >= target;
-    final remaining = target != null ? (target - value).clamp(0.0, double.infinity) : 0.0;
+    // Determine target state: under, met (within tolerance), or over.
+    // We treat "met" as within 0.5g of the target so users don't see a
+    // jarring "over" warning when they're essentially right on target.
+    final targetValue = target;
+    final hasTarget = targetValue != null;
+    final isOver = hasTarget && value > targetValue + 0.5;
+    final isMet = hasTarget && !isOver && value >= targetValue - 0.5;
+    final hasMeaningfulGap = hasTarget && !isMet && !isOver;
+    final remaining = hasTarget
+        ? (targetValue - value).clamp(0.0, double.infinity)
+        : 0.0;
+    final overBy = hasTarget
+        ? (value - targetValue).clamp(0.0, double.infinity)
+        : 0.0;
+
+    // Status color drives both the progress bar and the value/target label.
+    final statusColor = isOver
+        ? Theme.of(context).colorScheme.error
+        : isMet
+            ? Colors.green
+            : Theme.of(context).colorScheme.outline;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -646,18 +662,16 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
             ),
             const Spacer(),
-            if (target != null)
+            if (hasTarget)
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: Text(
-                  isTargetMet
-                      ? '✓ ${value.toStringAsFixed(0)}g / ${target.toStringAsFixed(0)}g'
-                      : '${value.toStringAsFixed(0)}g / ${target.toStringAsFixed(0)}g',
+                  '${value.toStringAsFixed(0)}g / ${targetValue.toStringAsFixed(0)}g',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: isTargetMet
-                            ? Colors.green
-                            : Theme.of(context).colorScheme.outline,
-                        fontWeight: isTargetMet ? FontWeight.bold : FontWeight.normal,
+                        color: statusColor,
+                        fontWeight: (isMet || isOver)
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                 ),
               )
@@ -674,15 +688,23 @@ class _DashboardPageState extends State<DashboardPage> {
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
-            value: target != null && target > 0 ? (value / target).clamp(0.0, 1.0) : 0.0,
+            // Pin visual progress at 100% when over — the color is what
+            // communicates the overshoot, not the bar fill ratio.
+            value: hasTarget && targetValue > 0
+                ? (value / targetValue).clamp(0.0, 1.0)
+                : 0.0,
             minHeight: 8,
             backgroundColor: color.withValues(alpha: 0.15),
             valueColor: AlwaysStoppedAnimation<Color>(
-              isTargetMet ? Colors.green : color,
+              isOver
+                  ? Theme.of(context).colorScheme.error
+                  : isMet
+                      ? Colors.green
+                      : color,
             ),
           ),
         ),
-        if (target != null && !isTargetMet)
+        if (hasMeaningfulGap)
           Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
@@ -691,6 +713,50 @@ class _DashboardPageState extends State<DashboardPage> {
                     color: Theme.of(context).colorScheme.outline,
                     fontSize: 11,
                   ),
+            ),
+          )
+        else if (isOver)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  size: 13,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Over by ${overBy.toStringAsFixed(1)}g',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ],
+            ),
+          )
+        else if (isMet)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  size: 13,
+                  color: Colors.green,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Target met',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.green,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ],
             ),
           ),
       ],
